@@ -53,10 +53,22 @@ app.get("/api/dhd", async (req, res) => {
         "Content-Type": "application/json",
       }
     });
-    const data = await response.json();
-    res.json(data);
+    const text = await response.text();
+    console.log("DHD status:", response.status);
+    console.log("DHD response:", text.slice(0, 500));
+    try {
+      const data = JSON.parse(text);
+      res.json(data);
+    } catch {
+      res.status(response.status).json({ 
+        error: "DHD non-JSON", 
+        status: response.status,
+        raw: text.slice(0, 300) 
+      });
+    }
   } catch (err) {
-    res.status(500).json({ error: "DHD fetch failed" });
+    console.error("DHD error:", err.message);
+    res.status(500).json({ error: "DHD fetch failed", message: err.message });
   }
 });
 
