@@ -47,7 +47,7 @@ app.get("/api/maystro", async (req, res) => {
 // ✅ DHD
 app.get("/api/dhd", async (req, res) => {
   try {
-    const response = await fetch("https://dhd-dz.com/api/shipments", {
+  const response = await fetch("https://platform.dhd-dz.com/api/shipments", { 
       headers: {
         "Authorization": req.headers["authorization"] || "",
         "Content-Type": "application/json",
