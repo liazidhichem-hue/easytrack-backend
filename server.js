@@ -47,20 +47,29 @@ app.get("/api/maystro", async (req, res) => {
 // ✅ DHD
 app.get("/api/dhd", async (req, res) => {
   try {
-    const response = await fetch("https://platform.dhd-dz.com/api/v1/get/orders?page=1&per_page=100", {
+    const token = req.headers["authorization"]?.replace("Bearer ", "") || "";
+    const response = await fetch(
+      `https://platform.dhd-dz.com/api/v1/get/orders?page=1&per_page=100&token=${token}`, {
       headers: {
-        "Authorization": req.headers["authorization"] || "",
+        "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       }
     });
     const text = await response.text();
+    console.log("DHD status:", response.status);
+    console.log("DHD response:", text.slice(0, 300));
     try {
       const data = JSON.parse(text);
       res.json(data);
     } catch {
-      res.status(500).json({ error: "DHD non-JSON", raw: text.slice(0, 300) });
+      res.status(response.status).json({ 
+        error: "DHD non-JSON", 
+        status: response.status,
+        raw: text.slice(0, 300) 
+      });
     }
   } catch (err) {
+    console.error("DHD error:", err.message);
     res.status(500).json({ error: "DHD fetch failed", message: err.message });
   }
 });
