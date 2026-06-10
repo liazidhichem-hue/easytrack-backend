@@ -35,7 +35,7 @@ app.get("/api/maystro", async (req, res) => {
       `https://orders-management.maystro-delivery.com/api/orders/?store_id=${storeId}`,
       {
         headers: {
-          "Authorization": `Bearer ${(req.headers["authorization"]?.replace("Bearer ", "") || "").trim()}`,
+          "Authorization": req.headers["authorization"] || "",
           "Content-Type": "application/json",
         }
       }
